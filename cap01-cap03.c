@@ -29,109 +29,173 @@ void emit(char *fmt, ...);
 /* PROGRAMA PRINCIPAL */
 int main()
 {
-        init();
-        expression();
+    init();
+    //expression();
+    assignment();
 
-        return 0;
+    return 0;
 }
 
 /* analisa e traduz um fator */
+
 void factor()
+
 {
-        if (look == '(') {
-                match('(');
-                expression();
-                match(')');
-        } else
-                emit("MOV AX, %c", getNum());
+
+    if (look == '(')
+    {
+
+        match('(');
+
+        expression();
+
+        match(')');
+
+    }
+    else if(isalpha(look))
+
+        ident();
+
+    else
+
+        emit("MOV AX, %c", getNum());
+
+}
+
+/* analisa e traduz um identificador */
+
+void ident()
+
+{
+
+    char name;
+
+    name = getName();
+
+    if (look == '(')
+    {
+
+        match('(');
+
+        match(')');
+
+        emit("CALL %c", name);
+
+    }
+    else
+
+        emit("MOV AX, [%c]", name);
+
+}
+
+/* analisa e traduz um comando de atribuição */
+
+void assignment()
+
+{
+
+    char name;
+
+    name = getName();
+
+    match('=');
+
+    expression();
+
+    emit("MOV [%c], AX", name);
+
 }
 
 /* reconhece e traduz uma multiplicação */
 void multiply()
 {
-        match('*');
-        factor();
-        emit("POP BX");
-        emit("IMUL BX");
+    match('*');
+    factor();
+    emit("POP BX");
+    emit("IMUL BX");
 }
 
 /* reconhece e traduz uma divisão */
 void divide()
 {
-        match('/');
-        factor();
-        emit("POP BX");
-        emit("XCHG AX, BX");
-        emit("CWD");
-        emit("IDIV BX");
+    match('/');
+    factor();
+    emit("POP BX");
+    emit("XCHG AX, BX");
+    emit("CWD");
+    emit("IDIV BX");
 }
 
 /* analisa e traduz um termo */
 void term()
 {
-        factor();
-        while (look == '*' || look == '/') {
-                emit("PUSH AX");
-                switch(look) {
-                  case '*':
-                        multiply();
-                        break;
-                  case '/':
-                        divide();
-                        break;
-                  default:
-                        expected("MulOp");
-                        break;
-                }
+    factor();
+    while (look == '*' || look == '/')
+    {
+        emit("PUSH AX");
+        switch(look)
+        {
+        case '*':
+            multiply();
+            break;
+        case '/':
+            divide();
+            break;
+        default:
+            expected("MulOp");
+            break;
         }
+    }
 }
 
 /* reconhece e traduz uma adição */
 void add()
 {
-        match('+');
-        term();
-        emit("POP BX");
-        emit("ADD AX, BX");
+    match('+');
+    term();
+    emit("POP BX");
+    emit("ADD AX, BX");
 }
 
 /* reconhece e traduz uma subtração */
 void subtract()
 {
-        match('-');
-        term();
-        emit("POP BX");
-        emit("SUB AX, BX");
-        emit("NEG AX");
+    match('-');
+    term();
+    emit("POP BX");
+    emit("SUB AX, BX");
+    emit("NEG AX");
 }
 
 /* analisa e traduz uma expressão */
 void expression()
 {
-        if (isAddOp(look))
-                emit("XOR AX, AX");
-        else
-                term();
-        while (isAddOp(look)) {
-                emit("PUSH AX");
-                switch(look) {
-                  case '+':
-                        add();
-                        break;
-                  case '-':
-                        subtract();
-                        break;
-                  default:
-                        expected("AddOp");
-                        break;
-                }
+    if (isAddOp(look))
+        emit("XOR AX, AX");
+    else
+        term();
+    while (isAddOp(look))
+    {
+        emit("PUSH AX");
+        switch(look)
+        {
+        case '+':
+            add();
+            break;
+        case '-':
+            subtract();
+            break;
+        default:
+            expected("AddOp");
+            break;
         }
+    }
 }
 
 /* reconhece operador aditivo */
 int isAddOp(int c)
 {
-        return (c == '+' || c == '-');
+    return (c == '+' || c == '-');
 }
 
 /* inicialização do compilador */
