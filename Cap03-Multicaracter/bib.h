@@ -1,12 +1,8 @@
-
 #define MAXNAME 30
-
 #define MAXNUM 5
 
 
-
 char look; /* O caracter lido "antecipadamente" (lookahead) */
-
 
 
 /* protótipos */
