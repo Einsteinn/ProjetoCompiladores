@@ -1,97 +1,10 @@
-/*
-
-Mais expressões: Variáveis, funções, tokens multi-caracter, espaços...
-
-O código abaixo foi escrito por Felipo Soranz e é uma adaptação
-
-do código original em Pascal escrito por Jack W. Crenshaw em sua
-
-série "Let's Build a Compiler".
-
-Este código é de livre distribuição e uso.
-
-*/
-
-
 
 #include <stdio.h>
 
 #include <stdlib.h>
 
 #include <stdarg.h>
-
-#define MAXNAME 30
-
-#define MAXNUM 5
-
-
-
-char look; /* O caracter lido "antecipadamente" (lookahead) */
-
-
-
-/* protótipos */
-
-void init();
-
-void nextChar();
-
-void error(char *fmt, ...);
-
-void fatal(char *fmt, ...);
-
-void expected(char *fmt, ...);
-
-void skipWhite();
-
-void match(char c);
-
-void getName(char *name);
-
-void getNum(char *num);
-
-void emit(char *fmt, ...);
-
-int isAddOp(char c);
-
-void ident();
-
-void factor();
-
-void multiply();
-
-void divide();
-
-void term();
-
-void add();
-
-void subtract();
-
-void expression();
-
-void assignment();
-
-
-
-/* PROGRAMA PRINCIPAL */
-
-int main()
-
-{
-
-    init();
-
-    assignment();
-
-    if (look != '\n')
-
-        expected("NewLine");
-
-    return 0;
-
-}
-
+#include "bib.h"
 
 
 /* inicialização do compilador */
